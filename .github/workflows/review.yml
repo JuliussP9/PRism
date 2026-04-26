@@ -1,6 +1,6 @@
 name: PRism Code Review Bot
 
-on:
+"on":
     pull_request:
         types: [opened, synchronize, reopened]
 
@@ -16,6 +16,6 @@ jobs:
                   uses: actions/setup-python@v4
                   with:
                     python-version: '3.11'
-                    
+
                 - name: Run PRism bot
                   run: python bot/review.py
