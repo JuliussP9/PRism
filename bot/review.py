@@ -3,12 +3,13 @@ import os
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
+# example function to test the PR check
 diff = """
 + def add(a, b):
 +   return a - b
 
 """
-
+# ai prompt
 response = client.messages.create(
     model = "claude-opus-4-5",
     max_tokens = 1024,
