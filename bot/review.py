@@ -8,13 +8,13 @@ client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 #real def function to trigger the PR check
 def fetch_pr_diff():
     github_token = os.environ.get("GITHUB_TOKEN")
-    repo = os.environ.get("GITHUB_REPO")
+    repo = os.environ.get("GITHUB_REPOSITORY")
     pr_number = os.environ.get("PR_NUMBER")
 
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
 
     headers = {
-        "Authorization": f"bearer {github_token}",
+        "Authorization": f"Bearer {github_token}",
         "Accept": "application/vnd.github.v3.diff"
 
     }
