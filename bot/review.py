@@ -41,6 +41,7 @@ response = client.messages.create(
 
 )
 
+print("AI review completed")
 print("PRism bot has been triggered")
 print("Pull request has been opened or updated")
 print(response.content[0].text)
