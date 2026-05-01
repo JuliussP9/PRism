@@ -24,6 +24,25 @@ def fetch_pr_diff():
 
     return response.text
 
+def post_review_comment(review):
+    github_token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    pr_number = os.environ.get("PR_NUMBER")
+
+    url = f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments"
+
+    headers = {
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    data = {"body": review}
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code!= 201:
+        raise Exception(f"Failed to post comment: {response.status_code} - {response.text}")
+    print("Review posted successfully")
+
 
 diff = fetch_pr_diff()
 
@@ -45,4 +64,5 @@ response = client.messages.create(
 print("AI review completed")
 print("PRism bot has been triggered")
 print("Pull request has been opened or updated")
-print(response.content[0].text)
+review = response.content[0].text
+post_review_comment(review)
