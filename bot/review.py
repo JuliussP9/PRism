@@ -65,3 +65,4 @@ if __name__ == "__main__":
     review = response.content[0].text
     print(review)
     post_review_comment(config, review)
+    
