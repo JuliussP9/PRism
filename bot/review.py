@@ -32,6 +32,9 @@ def post_review_comment(review):
     repo = os.environ.get("GITHUB_REPOSITORY")
     pr_number = os.environ.get("PR_NUMBER")
 
+    if not all([github_token, repo, pr_number]):
+        raise ValueError("Missing required environment variables")
+
     url = f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments"
 
     headers = {
