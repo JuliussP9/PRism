@@ -4,11 +4,14 @@ import anthropic
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
-
 def fetch_pr_diff():
+
     github_token = os.environ.get("GITHUB_TOKEN")
     repo = os.environ.get("GITHUB_REPOSITORY")
     pr_number = os.environ.get("PR_NUMBER")
+
+    if not all([github_token, repo, pr_number]):
+        raise ValueError("Missing required envirnonment variables")
 
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
 
@@ -17,7 +20,7 @@ def fetch_pr_diff():
         "Accept": "application/vnd.github.v3.diff"
     }
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=30)
 
     if response.status_code != 200:
         raise Exception(f"Failed to fetch PR diff: {response.status_code} - {response.text}")
@@ -37,9 +40,9 @@ def post_review_comment(review):
     }
 
     data = {"body": review}
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=30)
 
-    if response.status_code!= 201:
+    if response.status_code != 201:
         raise Exception(f"Failed to post comment: {response.status_code} - {response.text}")
     print("Review posted successfully")
 
@@ -64,5 +67,9 @@ response = client.messages.create(
 print("AI review completed")
 print("PRism bot has been triggered")
 print("Pull request has been opened or updated")
+
+if not response.content or not hasattr(response.content[0], 'text'):
+    raise Exception("Claude has returned empty or invalid response")
 review = response.content[0].text
+
 post_review_comment(review)
