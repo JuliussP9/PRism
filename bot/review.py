@@ -11,7 +11,7 @@ def fetch_pr_diff():
     pr_number = os.environ.get("PR_NUMBER")
 
     if not all([github_token, repo, pr_number]):
-        raise ValueError("Missing required envirnonment variables")
+        raise ValueError("Missing required environment variables")
 
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
 
@@ -49,30 +49,30 @@ def post_review_comment(review):
         raise Exception(f"Failed to post comment: {response.status_code} - {response.text}")
     print("Review posted successfully")
 
+if __name__ == "__main__":
+    diff = fetch_pr_diff()
 
-diff = fetch_pr_diff()
+    print("Fetched PR diff successfully")
+    print("DIFF PREVIEW:")
+    print(diff[:1000])
 
-print("Fetched PR diff successfully")
-print("DIFF PREVIEW:")
-print(diff[:1000])
+    response = client.messages.create(
+        model="claude-opus-4-5",
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "user",
+                "content": f"Review this code diff and flag any bugs or issues:\n\n{diff}"
+            }
+        ]
+    )
 
-response = client.messages.create(
-    model="claude-opus-4-5",
-    max_tokens=1024,
-    messages=[
-        {
-            "role": "user",
-            "content": f"Review this code diff and flag any bugs or issues:\n\n{diff}"
-        }
-    ]
-)
+    print("AI review completed")
+    print("PRism bot has been triggered")
+    print("Pull request has been opened or updated")
 
-print("AI review completed")
-print("PRism bot has been triggered")
-print("Pull request has been opened or updated")
+    if not response.content or not hasattr(response.content[0], 'text'):
+        raise Exception("Claude has returned empty or invalid response")
+    review = response.content[0].text
 
-if not response.content or not hasattr(response.content[0], 'text'):
-    raise Exception("Claude has returned empty or invalid response")
-review = response.content[0].text
-
-post_review_comment(review)
+    post_review_comment(review)
