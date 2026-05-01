@@ -52,6 +52,9 @@ def post_review_comment(review):
 if __name__ == "__main__":
     diff = fetch_pr_diff()
 
+    if not diff.strip():
+        raise Exception("PR diff is empty")
+
     print("Fetched PR diff successfully")
     print("DIFF PREVIEW:")
     print(diff[:1000])
@@ -74,5 +77,5 @@ if __name__ == "__main__":
     if not response.content or not hasattr(response.content[0], 'text'):
         raise Exception("Claude has returned empty or invalid response")
     review = response.content[0].text
-
+    print(review)
     post_review_comment(review)
