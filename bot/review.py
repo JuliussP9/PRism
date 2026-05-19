@@ -106,4 +106,4 @@ if __name__ == "__main__":
 
     review = response.content[0].text
     print(review)
-    post_review_comment(config, f"PRism AI Review\n\n{review}")
+    post_review_comment(config, f"## PRism AI Review\n\n{review}")
